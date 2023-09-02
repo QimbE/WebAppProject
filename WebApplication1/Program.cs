@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using TestShop.Data;
+
 namespace TestShop
 {
     public class Program
@@ -8,6 +11,12 @@ namespace TestShop
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            //EF DbContext connect to server
+            //also DI
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+                builder.Configuration.GetConnectionString("DefaultConnection")
+                ));
 
             var app = builder.Build();
 

@@ -2,8 +2,25 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index Category</h1>
+@if (TempData["success"] != null)
+{
+    @*rewrite it to better notification*@
+    <h2>@TempData["success"]</h2>
+}
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">
+                Category List
+            </h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-square"></i> &nbsp; Create New Category
+            </a>
+        </div>
+    </div>
+    <br>
 
 <table class="table table-borered table-srtiped" style="width:100%">
     <thead>
@@ -28,24 +45,35 @@
             @foreach (Category obj in Model)
             {
                 <tr>
-                    <td width="25%">
+                    <td width="10%">
                         @obj.Id
                     </td>
-                    <td width="25%">
+                    <td width="18%">
                         @obj.Name
                     </td>
-                    <td width="25%">
+                    <td width="15%">
                         @obj.DisplayOrder
                     </td>
-                    <td width="25%">
+                    <td width="20%">
                         @obj.CreatedDateTime
+                    </td>
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a asp-controller="Category" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </div>
                     </td>
                 </tr>
             }
         }
         else
         {
-            <p class="h1">Categories list is empty</p>
+            <p class="h3">Categories list is empty</p>
         }
     </tbody>
 </table>
+</div>

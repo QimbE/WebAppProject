@@ -18,6 +18,9 @@ namespace TestShop
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
 
+            //Runtime code changes compilation
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

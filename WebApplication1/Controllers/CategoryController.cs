@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestShop.Data;
+using TestShop.DataAccess.Data;
 using TestShop.Models;
 
 namespace TestShopProject.Controllers

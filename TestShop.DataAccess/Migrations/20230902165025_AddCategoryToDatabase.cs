@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TestShopProject.Migrations
+namespace TestShop.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoryToDatabase : Migration

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using TestShop.Models;
 
-namespace TestShop.Controllers
+namespace TestShopProject.Controllers
 {
     public class HomeController : Controller
     {

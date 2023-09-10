@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TestShop.Models;
 
-namespace TestShop.Data
+namespace TestShop.DataAccess.Data
 {
     public class ApplicationDbContext: DbContext
     {

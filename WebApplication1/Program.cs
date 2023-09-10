@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using TestShop.Data;
+using TestShop.DataAccess.Data;
 
-namespace TestShop
+namespace TestShopProject
 {
     public class Program
     {

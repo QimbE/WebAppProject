@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TestShop.DataAccess.Data;
+using TestShop.DataAccess.Repository;
+using TestShop.DataAccess.Repository.IRepository;
 
 namespace TestShopProject
 {
@@ -13,10 +15,12 @@ namespace TestShopProject
             builder.Services.AddControllersWithViews();
 
             //EF DbContext connect to server
-            //also DI
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
+
+            //Repository pattern DI
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //Runtime code changes compilation
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -40,7 +44,7 @@ namespace TestShopProject
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

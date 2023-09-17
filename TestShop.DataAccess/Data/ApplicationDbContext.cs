@@ -12,14 +12,14 @@ namespace TestShop.DataAccess.Data
         {
             
         }
-
+        //Sample
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1 },
                 new Category { Id = 2, Name = "SciFi", DisplayOrder = 2 },
                 new Category { Id = 3, Name = "History", DisplayOrder = 3 }
-            );
+			);
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
@@ -31,8 +31,10 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 19.99m,
                     Price = 15.99m,
                     Price50 = 12.99m,
-                    Price100 = 10.99m
-                },
+                    Price100 = 10.99m,
+                    CategoryId = 1,
+                    ImageUrl = ""
+				},
                 new Product
                 {
                     Id = 2,
@@ -43,8 +45,10 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 14.99m,
                     Price = 12.49m,
                     Price50 = 10.99m,
-                    Price100 = 9.99m
-                },
+                    Price100 = 9.99m,
+                    CategoryId = 1,
+                    ImageUrl = ""
+				},
                 new Product
                 {
                     Id = 3,
@@ -55,8 +59,10 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 12.99m,
                     Price = 10.99m,
                     Price50 = 9.49m,
-                    Price100 = 8.99m
-                },
+                    Price100 = 8.99m,
+                    CategoryId = 1,
+                    ImageUrl = ""
+				},
                 new Product
                 {
                     Id = 4,
@@ -67,8 +73,10 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 11.99m,
                     Price = 9.99m,
                     Price50 = 8.49m,
-                    Price100 = 7.99m
-                },
+                    Price100 = 7.99m,
+                    CategoryId = 1,
+                    ImageUrl = ""
+				},
                 new Product
                 {
                     Id = 5,
@@ -79,8 +87,10 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 10.99m,
                     Price = 8.99m,
                     Price50 = 7.49m,
-                    Price100 = 6.99m
-                }
+                    Price100 = 6.99m,
+                    CategoryId = 1,
+                    ImageUrl = ""
+				}
             );
         }
     }

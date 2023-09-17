@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TestShop.DataAccess.Data;
 
@@ -11,9 +12,11 @@ using TestShop.DataAccess.Data;
 namespace TestShop.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230917131223_addProductsToDb")]
+    partial class addProductsToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,21 +52,21 @@ namespace TestShop.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDateTime = new DateTime(2023, 9, 17, 20, 57, 50, 109, DateTimeKind.Local).AddTicks(5155),
+                            CreatedDateTime = new DateTime(2023, 9, 17, 18, 12, 22, 965, DateTimeKind.Local).AddTicks(2267),
                             DisplayOrder = 1,
                             Name = "Action"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDateTime = new DateTime(2023, 9, 17, 20, 57, 50, 109, DateTimeKind.Local).AddTicks(5164),
+                            CreatedDateTime = new DateTime(2023, 9, 17, 18, 12, 22, 965, DateTimeKind.Local).AddTicks(2276),
                             DisplayOrder = 2,
                             Name = "SciFi"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDateTime = new DateTime(2023, 9, 17, 20, 57, 50, 109, DateTimeKind.Local).AddTicks(5165),
+                            CreatedDateTime = new DateTime(2023, 9, 17, 18, 12, 22, 965, DateTimeKind.Local).AddTicks(2277),
                             DisplayOrder = 3,
                             Name = "History"
                         });
@@ -81,18 +84,11 @@ namespace TestShop.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ISBN")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -114,8 +110,6 @@ namespace TestShop.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Products");
 
                     b.HasData(
@@ -123,10 +117,8 @@ namespace TestShop.DataAccess.Migrations
                         {
                             Id = 1,
                             Author = "Hunter S. Thompson",
-                            CategoryId = 1,
                             Description = "A wild journey to the heart of the American Dream.",
                             ISBN = "978-0679785897",
-                            ImageUrl = "",
                             ListPrice = 19.99m,
                             Price = 15.99m,
                             Price100 = 10.99m,
@@ -137,10 +129,8 @@ namespace TestShop.DataAccess.Migrations
                         {
                             Id = 2,
                             Author = "Harper Lee",
-                            CategoryId = 1,
                             Description = "A classic novel about racial injustice and moral growth.",
                             ISBN = "978-0061120084",
-                            ImageUrl = "",
                             ListPrice = 14.99m,
                             Price = 12.49m,
                             Price100 = 9.99m,
@@ -151,10 +141,8 @@ namespace TestShop.DataAccess.Migrations
                         {
                             Id = 3,
                             Author = "F. Scott Fitzgerald",
-                            CategoryId = 1,
                             Description = "A story of wealth, love, and tragedy in the Jazz Age.",
                             ISBN = "978-0743273565",
-                            ImageUrl = "",
                             ListPrice = 12.99m,
                             Price = 10.99m,
                             Price100 = 8.99m,
@@ -165,10 +153,8 @@ namespace TestShop.DataAccess.Migrations
                         {
                             Id = 4,
                             Author = "George Orwell",
-                            CategoryId = 1,
                             Description = "A dystopian novel depicting a totalitarian society.",
                             ISBN = "978-0451524935",
-                            ImageUrl = "",
                             ListPrice = 11.99m,
                             Price = 9.99m,
                             Price100 = 7.99m,
@@ -179,27 +165,14 @@ namespace TestShop.DataAccess.Migrations
                         {
                             Id = 5,
                             Author = "Jane Austen",
-                            CategoryId = 1,
                             Description = "A timeless story of love and class in 19th-century England.",
                             ISBN = "978-0141439518",
-                            ImageUrl = "",
                             ListPrice = 10.99m,
                             Price = 8.99m,
                             Price100 = 6.99m,
                             Price50 = 7.49m,
                             Title = "Pride and Prejudice"
                         });
-                });
-
-            modelBuilder.Entity("TestShop.Models.Product", b =>
-                {
-                    b.HasOne("TestShop.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

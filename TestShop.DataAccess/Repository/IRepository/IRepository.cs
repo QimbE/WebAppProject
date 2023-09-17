@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace TestShop.DataAccess.Repository.IRepository
 {
     public interface IRepository<T> where T: class
-    //T - Category
+    //T - Some Db entity
     {
         IEnumerable<T> GetAll();
         T Get(Expression<Func<T,bool>> filter);

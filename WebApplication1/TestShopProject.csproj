@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestShop.DataAccess\TestShop.DataAccess.csproj" />
+    <ProjectReference Include="..\TestShop.Utility\TestShop.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

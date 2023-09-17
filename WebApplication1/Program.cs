@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using TestShop.DataAccess.Data;
 using TestShop.DataAccess.Repository;
@@ -25,7 +28,7 @@ namespace TestShopProject
             //Runtime code changes compilation
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
-            var app = builder.Build();
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

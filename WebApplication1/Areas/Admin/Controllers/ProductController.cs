@@ -87,6 +87,11 @@ namespace TestShopProject.Areas.Admin.Controllers
 
                     productVm.Product.ImageUrl = @"\images\product\" + fileName;
 	            }
+	            else
+	            {
+		            productVm.Product.ImageUrl = "";
+
+	            }
 
 	            if (productVm.Product.Id == 0)
 	            {
@@ -112,38 +117,6 @@ namespace TestShopProject.Areas.Admin.Controllers
 	            return View(productVm);
 			}
         }
-        //GET
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product productFromDb = _unitOfWork.Product.Get(x => x.Id == id);
-
-            if (productFromDb == null)
-            {
-                return NotFound();
-            }
-
-            return View(productFromDb);
-        }
-        //POST
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
-        {
-            Product obj = _unitOfWork.Product.Get(x => x.Id == id);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Product.Remove(obj);
-            _unitOfWork.Save();
-            TempData["success"] = "Product deleted successfully";
-            return RedirectToAction("Index");
-        }
-
         #region API CALLS
 
         [HttpGet]
@@ -152,8 +125,31 @@ namespace TestShopProject.Areas.Admin.Controllers
 	        IEnumerable<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category");
 	        return Json(objProductList);
         }
-        
 
-        #endregion
-    }
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+	        Product productToBeDeleted = _unitOfWork.Product.Get(x => x.Id == id);
+	        if (productToBeDeleted == null)
+	        {
+		        return Json(new { success = false, message = "Error while deleting" });
+	        }
+
+            //delete image
+			var oldImagePath =
+								Path.Combine(_webHostEnvironment.WebRootPath,
+								productToBeDeleted.ImageUrl.TrimStart('\\'));
+			if (System.IO.File.Exists(oldImagePath))
+			{
+				System.IO.File.Delete(oldImagePath);
+			}
+
+            _unitOfWork.Product.Remove(productToBeDeleted);
+            _unitOfWork.Save();
+
+            return Json(new { success = true, message = "Delete Successful" });
+		}
+
+		#endregion
+	}
 }

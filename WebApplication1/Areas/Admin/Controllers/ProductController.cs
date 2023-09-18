@@ -97,7 +97,7 @@ namespace TestShopProject.Areas.Admin.Controllers
 		            _unitOfWork.Product.Update(productVm.Product);
 				}
                 _unitOfWork.Save();
-                TempData["success"] = "Product created successfully";
+                TempData["success"] = (productVm.Product.Id!=0)? "Product updated successfully": "Product created successfully";
                 return RedirectToAction("Index");
             }
             else
@@ -143,5 +143,17 @@ namespace TestShopProject.Areas.Admin.Controllers
             TempData["success"] = "Product deleted successfully";
             return RedirectToAction("Index");
         }
+
+        #region API CALLS
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+	        IEnumerable<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category");
+	        return Json(objProductList);
+        }
+        
+
+        #endregion
     }
 }

@@ -7,8 +7,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <!--Toastr notififcations-->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
     <!--Bootstrap 5-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!--DataTables-->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
     <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/bootswatchTheme.css" asp-append-version="true" />
 </head>
@@ -64,10 +69,15 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <!--Bootstrap 5-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+
 	<script src="~/js/site.js" asp-append-version="true"></script>
     <!--Tiny MCE-->
-    <script src="https://cdn.tiny.cloud/1/1uqoypu5t82w3yzt6rpg4azf5kkote7otq48ga0ln3olf151/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+	<script src="https://cdn.tiny.cloud/1/1uqoypu5t82w3yzt6rpg4azf5kkote7otq48ga0ln3olf151/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+	<!--DataTables-->
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" referrerpolicy="origin"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

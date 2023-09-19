@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
@@ -16,14 +17,19 @@ namespace TestShopProject
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
             //EF DbContext connect to server
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
 
-            //Repository pattern DI
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //Identity injection
+            builder.Services.AddDefaultIdentity<IdentityUser>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
+	            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+			//Repository pattern DI
+			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //Runtime code changes compilation
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -43,7 +49,11 @@ namespace TestShopProject
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
+
+			app.UseAuthorization();
+
+            app.MapRazorPages();
 
             app.MapControllerRoute(
                 name: "default",

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
@@ -6,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using TestShop.DataAccess.Data;
 using TestShop.DataAccess.Repository;
 using TestShop.DataAccess.Repository.IRepository;
+using TestShop.Models;
+using TestShop.Utility;
 
 namespace TestShopProject
 {
@@ -25,10 +28,22 @@ namespace TestShopProject
                 ));
 
             //Identity injection
-            builder.Services.AddDefaultIdentity<IdentityUser>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
-	            .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
+	            .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
-			//Repository pattern DI
+            //Cookie routing
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Logout";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
+            //Stub code
+            builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+			//Repository DI
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //Runtime code changes compilation

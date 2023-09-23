@@ -8,5 +8,9 @@ namespace TestShop.Utility
 {
     public static class StaticDetails
     {
+        public const string Role_Custumer = "Customer";
+        public const string Role_Company = "Company";
+        public const string Role_Admin = "Admin";
+        public const string Role_Employee = "Employee";
     }
 }

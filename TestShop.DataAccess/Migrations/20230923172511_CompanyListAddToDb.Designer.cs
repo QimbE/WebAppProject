@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TestShop.DataAccess.Data;
 
@@ -11,9 +12,11 @@ using TestShop.DataAccess.Data;
 namespace TestShop.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230923172511_CompanyListAddToDb")]
+    partial class CompanyListAddToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,21 +258,21 @@ namespace TestShop.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDateTime = new DateTime(2023, 9, 24, 12, 33, 12, 319, DateTimeKind.Local).AddTicks(1557),
+                            CreatedDateTime = new DateTime(2023, 9, 23, 22, 25, 11, 244, DateTimeKind.Local).AddTicks(5209),
                             DisplayOrder = 1,
                             Name = "Action"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDateTime = new DateTime(2023, 9, 24, 12, 33, 12, 319, DateTimeKind.Local).AddTicks(1568),
+                            CreatedDateTime = new DateTime(2023, 9, 23, 22, 25, 11, 244, DateTimeKind.Local).AddTicks(5218),
                             DisplayOrder = 2,
                             Name = "SciFi"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDateTime = new DateTime(2023, 9, 24, 12, 33, 12, 319, DateTimeKind.Local).AddTicks(1569),
+                            CreatedDateTime = new DateTime(2023, 9, 23, 22, 25, 11, 244, DateTimeKind.Local).AddTicks(5219),
                             DisplayOrder = 3,
                             Name = "History"
                         });
@@ -310,38 +313,6 @@ namespace TestShop.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            City = "Sample City",
-                            Name = "Sample Company",
-                            PhoneNumber = "555-555-5555",
-                            PostalCode = "12345",
-                            State = "Sample State",
-                            StreetAddress = "123 Main St"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            City = "Another City",
-                            Name = "ABC Corporation",
-                            PhoneNumber = "555-123-4567",
-                            PostalCode = "54321",
-                            State = "Another State",
-                            StreetAddress = "456 Elm St"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            City = "Yet Another City",
-                            Name = "XYZ Ltd.",
-                            PhoneNumber = "555-987-6543",
-                            PostalCode = "98765",
-                            State = "Yet Another State",
-                            StreetAddress = "789 Oak St"
-                        });
                 });
 
             modelBuilder.Entity("TestShop.Models.Product", b =>

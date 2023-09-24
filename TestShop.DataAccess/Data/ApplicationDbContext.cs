@@ -10,6 +10,7 @@ namespace TestShop.DataAccess.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Company> Companies { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             :base(options)
         {
@@ -21,8 +22,39 @@ namespace TestShop.DataAccess.Data
             //because of identity
             base.OnModelCreating(modelBuilder);
 
-
-            modelBuilder.Entity<Category>().HasData(
+            modelBuilder.Entity<Company>().HasData(
+				new Company
+				{
+					Id = 1,
+					Name = "Sample Company",
+					StreetAddress = "123 Main St",
+					City = "Sample City",
+					State = "Sample State",
+					PostalCode = "12345",
+					PhoneNumber = "555-555-5555"
+				},
+				new Company
+				{
+					Id = 2,
+					Name = "ABC Corporation",
+					StreetAddress = "456 Elm St",
+					City = "Another City",
+					State = "Another State",
+					PostalCode = "54321",
+					PhoneNumber = "555-123-4567"
+				},
+				new Company
+				{
+					Id = 3,
+					Name = "XYZ Ltd.",
+					StreetAddress = "789 Oak St",
+					City = "Yet Another City",
+					State = "Yet Another State",
+					PostalCode = "98765",
+					PhoneNumber = "555-987-6543"
+				}
+            );
+			modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1 },
                 new Category { Id = 2, Name = "SciFi", DisplayOrder = 2 },
                 new Category { Id = 3, Name = "History", DisplayOrder = 3 }

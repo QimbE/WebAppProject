@@ -21,7 +21,7 @@ namespace TestShopProject.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-	        IEnumerable<Product> productList = _unitOfWork.Product.GetAll("Category");
+	        IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties:"Category");
             return View(productList);
         }
         public IActionResult Details(int id)
@@ -38,6 +38,7 @@ namespace TestShopProject.Areas.Customer.Controllers
         [Authorize]
         public IActionResult Details(ShoppingCart shoppingCart)
         {
+	        shoppingCart.Id = default(int);
 	        ClaimsIdentity claimsIdentity= (ClaimsIdentity)User.Identity;
 	        string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.ApplicationUserId = userId;

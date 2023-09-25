@@ -12,7 +12,7 @@ public class OrderHeader
 	public string ApplicationUserId { get; set; }
 	[ForeignKey("ApplicationUserId")]
 	[ValidateNever]
-	public ApplicationUser ApproveApplicationUser { get; set; }
+	public ApplicationUser ApplicationUser { get; set; }
 
 	public DateTime OrderDate { get; set; }
 	public DateTime ShippingDate { get; set; }

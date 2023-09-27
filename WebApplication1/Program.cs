@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using TestShop.DataAccess.Data;
 using TestShop.DataAccess.Repository;
 using TestShop.DataAccess.Repository.IRepository;
@@ -27,7 +28,10 @@ namespace TestShopProject
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
 
-            //Identity injection
+            //Stripe keys
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
+            //Identity
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
 	            .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -60,9 +64,13 @@ namespace TestShopProject
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
-            app.UseRouting();
+            //Stripe connection.
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretLey").Get<string>();
+
+			app.UseRouting();
 
             app.UseAuthentication();
 

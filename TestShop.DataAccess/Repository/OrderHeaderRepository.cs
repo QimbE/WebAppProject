@@ -17,5 +17,33 @@ namespace TestShop.DataAccess.Repository
         {
             _db.OrderHeaders.Update(obj);
         }
-    }
+
+        public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+        {
+	        var order = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);
+	        if (order != null)
+	        {
+                order.OrderStatus = orderStatus;
+                if (!string.IsNullOrEmpty(paymentStatus))
+                {
+                    order.PaymentStatus = paymentStatus;
+                }
+
+	        }
+        }
+
+        public void UpdateStripePaymentId(int id, string sessionId, string? paymentIntentId = null)
+        {
+			var order = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);
+			if (!string.IsNullOrEmpty(sessionId))
+			{
+				order.SessionId = sessionId;
+			}
+			if (!string.IsNullOrEmpty(paymentIntentId))
+			{
+				order.PaymentIntentId = paymentIntentId;
+                order.PaymentDate = DateTime.Now;
+			}
+		}
+	}
 }

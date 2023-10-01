@@ -132,7 +132,7 @@ namespace TestShopProject.Areas.Customer.Controllers
 
 				var options = new SessionCreateOptions
 				{
-					SuccessUrl = domain+$"customer/cart/OrderConfirmation?={ShoppingCartVM.OrderHeader.Id}",
+					SuccessUrl = domain+$"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
 					CancelUrl = domain+$"customer/cart/index",
 					LineItems = new List<SessionLineItemOptions>(),
 					Mode = "payment",
@@ -165,6 +165,7 @@ namespace TestShopProject.Areas.Customer.Controllers
 				_unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
 				_unitOfWork.Save();
 				Response.Headers.Add("Location",session.Url);
+
 				return new StatusCodeResult(303);
 			}
 
@@ -175,6 +176,7 @@ namespace TestShopProject.Areas.Customer.Controllers
 		{
 			OrderHeader orderHeader =
 				_unitOfWork.OrderHeader.Get(x => x.Id == id, includeProperties: "ApplicationUser");
+
 			if (orderHeader.PaymentStatus!=StaticDetails.PaymentStatusDelayedPayment)
 			{
 				//this is an order by customer.
@@ -183,7 +185,8 @@ namespace TestShopProject.Areas.Customer.Controllers
 
 				if (session.PaymentStatus.ToLower() == "paid")
 				{
-					_unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+					//_unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+					_unitOfWork.OrderHeader.UpdateStripePaymentId(id, session.Id, session.PaymentIntentId);
 					_unitOfWork.OrderHeader.UpdateStatus(id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved );
 					_unitOfWork.Save();
 				}

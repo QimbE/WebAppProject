@@ -143,7 +143,7 @@ namespace TestShopProject.Areas.Identity.Pages.Account
                     Text = i,
                     Value = i
                 }),
-                CompanyList = _unitOfWork.Company.GetAll()
+                CompanyList = (await _unitOfWork.Company.GetAll())
 	                .Select(x => new SelectListItem
                 {
                         Text = x.Name,

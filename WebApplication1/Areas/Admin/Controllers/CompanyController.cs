@@ -19,15 +19,15 @@ namespace TestShopProject.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
 
 		}
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Company> objProductList = _unitOfWork.Company.GetAll();
+            IEnumerable<Company> objProductList = await _unitOfWork.Company.GetAll();
             
             return View(objProductList);
         }
         //GET
         // Update/Insert
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             if (id is null || id == 0)
             {
@@ -37,7 +37,7 @@ namespace TestShopProject.Areas.Admin.Controllers
             else
             {
                 //Update case
-                Company company = _unitOfWork.Company.Get(x => x.Id==id);
+                Company company = await _unitOfWork.Company.Get(x => x.Id==id);
 				return View(company);
 			}
 			
@@ -45,19 +45,19 @@ namespace TestShopProject.Areas.Admin.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Company obj)
+        public async Task<IActionResult> Upsert(Company obj)
         {
             if (ModelState.IsValid)
             {
 	            if (obj.Id == 0)
 	            {
-		            _unitOfWork.Company.Add(obj);
+		            await _unitOfWork.Company.Add(obj);
 				}
 	            else
 	            {
-		            _unitOfWork.Company.Update(obj);
+		            await _unitOfWork.Company.Update(obj);
 				}
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 TempData["success"] = (obj.Id!=0)? "Company updated successfully": "Company created successfully";
                 return RedirectToAction("Index");
             }
@@ -69,23 +69,23 @@ namespace TestShopProject.Areas.Admin.Controllers
         #region API CALLS
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-	        IEnumerable<Company> objCompanyList = _unitOfWork.Company.GetAll();
+	        IEnumerable<Company> objCompanyList = await _unitOfWork.Company.GetAll();
 	        return Json(objCompanyList);
         }
 
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            Company сompanyToBeDeleted = _unitOfWork.Company.Get(x => x.Id == id);
+            Company сompanyToBeDeleted = await _unitOfWork.Company.Get(x => x.Id == id);
 	        if (сompanyToBeDeleted == null)
 	        {
 		        return Json(new { success = false, message = "Error while deleting" });
 	        }
 
-            _unitOfWork.Company.Remove(сompanyToBeDeleted);
-            _unitOfWork.Save();
+            await _unitOfWork.Company.Remove(сompanyToBeDeleted);
+            await _unitOfWork.Save();
 
             return Json(new { success = true, message = "Delete Successful" });
 		}

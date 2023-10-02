@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using TestShop.DataAccess.Data;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
@@ -14,23 +15,23 @@ public class ProductRepository: Repository<Product>, IProductRepository
     {
         _db = db;
     }
-    public void Update(Product obj)
+    public async Task Update(Product obj)
     {
-	    var objectFromDb = _db.Products.FirstOrDefault(x => x.Id == obj.Id);
+	    var objectFromDb = _db.Products.FirstOrDefaultAsync(x => x.Id == obj.Id);
 	    if (objectFromDb != null)
 	    {
-            objectFromDb.Title = obj.Title;
-            objectFromDb.Description = obj.Description;
-            objectFromDb.CategoryId = obj.CategoryId;
-            objectFromDb.ISBN = obj.ISBN;
-            objectFromDb.Price = obj.Price;
-            objectFromDb.ListPrice = obj.ListPrice;
-            objectFromDb.Author = obj.Author;
-            objectFromDb.Price50 = obj.Price50;
-            objectFromDb.Price100 = obj.Price100;
+            objectFromDb.Result.Title = obj.Title;
+            objectFromDb.Result.Description = obj.Description;
+            objectFromDb.Result.CategoryId = obj.CategoryId;
+            objectFromDb.Result.ISBN = obj.ISBN;
+            objectFromDb.Result.Price = obj.Price;
+            objectFromDb.Result.ListPrice = obj.ListPrice;
+            objectFromDb.Result.Author = obj.Author;
+            objectFromDb.Result.Price50 = obj.Price50;
+            objectFromDb.Result.Price100 = obj.Price100;
             if (obj.ImageUrl != null)
             {
-	            objectFromDb.ImageUrl = obj.ImageUrl;
+	            objectFromDb.Result.ImageUrl = obj.ImageUrl;
             }
 	    }
     }

@@ -16,9 +16,9 @@ namespace TestShopProject.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> objCategoryList = _unitOfWork.Category.GetAll();
+            IEnumerable<Category> objCategoryList = await _unitOfWork.Category.GetAll();
             return View(objCategoryList);
         }
         //GET
@@ -29,12 +29,12 @@ namespace TestShopProject.Areas.Admin.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category obj)
+        public async Task<IActionResult> Create(Category obj)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(obj);
-                _unitOfWork.Save();
+                await _unitOfWork.Category.Add(obj);
+                await _unitOfWork.Save();
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
@@ -44,13 +44,13 @@ namespace TestShopProject.Areas.Admin.Controllers
             }
         }
         //GET
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category categoryFromDb = _unitOfWork.Category.Get(x => x.Id == id);
+            Category categoryFromDb = await _unitOfWork.Category.Get(x => x.Id == id);
 
             if (categoryFromDb == null)
             {
@@ -62,12 +62,12 @@ namespace TestShopProject.Areas.Admin.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category obj)
+        public async Task<IActionResult> Edit(Category obj)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
-                _unitOfWork.Save();
+                await _unitOfWork.Category.Update(obj);
+                await _unitOfWork.Save();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
@@ -77,13 +77,13 @@ namespace TestShopProject.Areas.Admin.Controllers
             }
         }
         //GET
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category categoryFromDb = _unitOfWork.Category.Get(x => x.Id == id);
+            Category categoryFromDb = await _unitOfWork.Category.Get(x => x.Id == id);
 
             if (categoryFromDb == null)
             {
@@ -95,15 +95,15 @@ namespace TestShopProject.Areas.Admin.Controllers
         //POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
+        public async Task<IActionResult> DeletePOST(int? id)
         {
-            Category obj = _unitOfWork.Category.Get(x => x.Id == id);
+            Category obj = await _unitOfWork.Category.Get(x => x.Id == id);
             if (obj == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Category.Remove(obj);
-            _unitOfWork.Save();
+            await _unitOfWork.Category.Remove(obj);
+            await _unitOfWork.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }

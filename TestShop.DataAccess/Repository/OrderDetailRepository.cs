@@ -13,7 +13,7 @@ namespace TestShop.DataAccess.Repository
             _db = db;
         }
 
-        public void Update(OrderDetail obj)
+        public async Task Update(OrderDetail obj)
         {
             _db.OrderDetails.Update(obj);
         }

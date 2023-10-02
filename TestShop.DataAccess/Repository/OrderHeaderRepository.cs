@@ -1,4 +1,5 @@
-﻿using TestShop.DataAccess.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TestShop.DataAccess.Data;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
 
@@ -13,12 +14,12 @@ namespace TestShop.DataAccess.Repository
             _db = db;
         }
 
-        public void Update(OrderHeader obj)
+        public async Task Update(OrderHeader obj)
         {
             _db.OrderHeaders.Update(obj);
         }
 
-        public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+        public async Task UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
         {
 	        var order = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);
 	        if (order != null)
@@ -32,17 +33,17 @@ namespace TestShop.DataAccess.Repository
 	        }
         }
 
-        public void UpdateStripePaymentId(int id, string sessionId, string? paymentIntentId = null)
+        public async Task UpdateStripePaymentId(int id, string sessionId, string? paymentIntentId = null)
         {
-			var order = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);
+			var order = _db.OrderHeaders.FirstOrDefaultAsync(x => x.Id == id);
 			if (!string.IsNullOrEmpty(sessionId))
 			{
-				order.SessionId = sessionId;
+				order.Result.SessionId = sessionId;
 			}
 			if (!string.IsNullOrEmpty(paymentIntentId))
 			{
-				order.PaymentIntentId = paymentIntentId;
-                order.PaymentDate = DateTime.Now;
+				order.Result.PaymentIntentId = paymentIntentId;
+                order.Result.PaymentDate = DateTime.Now;
 			}
 		}
 	}

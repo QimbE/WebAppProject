@@ -21,15 +21,15 @@ namespace TestShopProject.Areas.Admin.Controllers
             _webHostEnvironment = webHostEnvironment;
 
 		}
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties:"Category");
+            IEnumerable<Product> objProductList = await _unitOfWork.Product.GetAll(includeProperties:"Category");
             
             return View(objProductList);
         }
         //GET
         // Update/Insert
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             //ViewBag.CategoryList = categoryList;
             //ViewData["CategoryList"] = categoryList;
@@ -37,8 +37,8 @@ namespace TestShopProject.Areas.Admin.Controllers
 
             ProductVM productVm = new ProductVM()
             {
-	            CategoryList = _unitOfWork.Category
-		            .GetAll()
+	            CategoryList = (await _unitOfWork.Category
+		            .GetAll())
 		            .Select(x => new SelectListItem
 		            {
 			            Text = x.Name,
@@ -54,7 +54,7 @@ namespace TestShopProject.Areas.Admin.Controllers
             else
             {
                 //Update case
-                productVm.Product = _unitOfWork.Product.Get(x => x.Id==id);
+                productVm.Product = await _unitOfWork.Product.Get(x => x.Id==id);
 				return View(productVm);
 			}
 			
@@ -62,7 +62,7 @@ namespace TestShopProject.Areas.Admin.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductVM productVm, IFormFile? file)
+        public async Task<IActionResult> Upsert(ProductVM productVm, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace TestShopProject.Areas.Admin.Controllers
                     }
                     using (FileStream fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
                     {
-	                    file.CopyTo(fileStream);
+	                    await file.CopyToAsync(fileStream);
                         
                     }
 
@@ -99,20 +99,20 @@ namespace TestShopProject.Areas.Admin.Controllers
 
 	            if (productVm.Product.Id == 0)
 	            {
-		            _unitOfWork.Product.Add(productVm.Product);
+		            await _unitOfWork.Product.Add(productVm.Product);
 				}
 	            else
 	            {
-		            _unitOfWork.Product.Update(productVm.Product);
+		            await _unitOfWork.Product.Update(productVm.Product);
 				}
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 TempData["success"] = (productVm.Product.Id!=0)? "Product updated successfully": "Product created successfully";
                 return RedirectToAction("Index");
             }
             else
             {
-	            productVm.CategoryList = _unitOfWork.Category
-		            .GetAll()
+	            productVm.CategoryList = (await _unitOfWork.Category
+		            .GetAll())
 		            .Select(x => new SelectListItem
 		            {
 			            Text = x.Name,
@@ -124,16 +124,16 @@ namespace TestShopProject.Areas.Admin.Controllers
         #region API CALLS
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-	        IEnumerable<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category");
+	        IEnumerable<Product> objProductList = await _unitOfWork.Product.GetAll(includeProperties: "Category");
 	        return Json(objProductList);
         }
 
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-	        Product productToBeDeleted = _unitOfWork.Product.Get(x => x.Id == id);
+	        Product productToBeDeleted = await _unitOfWork.Product.Get(x => x.Id == id);
 	        if (productToBeDeleted == null)
 	        {
 		        return Json(new { success = false, message = "Error while deleting" });
@@ -148,8 +148,8 @@ namespace TestShopProject.Areas.Admin.Controllers
 				System.IO.File.Delete(oldImagePath);
 			}
 
-            _unitOfWork.Product.Remove(productToBeDeleted);
-            _unitOfWork.Save();
+            await _unitOfWork.Product.Remove(productToBeDeleted);
+            await _unitOfWork.Save();
 
             return Json(new { success = true, message = "Delete Successful" });
 		}

@@ -22,14 +22,14 @@ namespace TestShopProject.Areas.Customer.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
 			ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
 			string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
 			ShoppingCartVM = new()
 			{
-				ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == userId,
+				ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == userId,
 					includeProperties: "Product"),
 				OrderHeader = new()
 			};
@@ -43,19 +43,19 @@ namespace TestShopProject.Areas.Customer.Controllers
 			return View(ShoppingCartVM);
 		}
 
-		public IActionResult Summary()
+		public async Task<IActionResult> Summary()
 		{
 			ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
 			string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
 			ShoppingCartVM = new()
 			{
-				ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == userId,
+				ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == userId,
 					includeProperties: "Product"),
 				OrderHeader = new()
 			};
 
-			ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(x => x.Id == userId);
+			ShoppingCartVM.OrderHeader.ApplicationUser = await _unitOfWork.ApplicationUser.Get(x => x.Id == userId);
 
 			ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
 			ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
@@ -74,18 +74,18 @@ namespace TestShopProject.Areas.Customer.Controllers
 
 		[HttpPost]
 		[ActionName("Summary")]
-		public IActionResult SummaryPOST()
+		public async Task<IActionResult> SummaryPOST()
 		{
 			ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
 			string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-			ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == userId,
+			ShoppingCartVM.ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == userId,
 				includeProperties: "Product");
 
 			ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
 			ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
 
-			ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(x => x.Id == userId);
+			ApplicationUser applicationUser = await _unitOfWork.ApplicationUser.Get(x => x.Id == userId);
 
 
 			foreach (var shoppingCart in ShoppingCartVM.ShoppingCartList)
@@ -108,8 +108,8 @@ namespace TestShopProject.Areas.Customer.Controllers
 				ShoppingCartVM.OrderHeader.OrderStatus = StaticDetails.StatusApproved;
 
 			}
-			_unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
-			_unitOfWork.Save();
+			await _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+			await _unitOfWork.Save();
 			foreach (var cart in ShoppingCartVM.ShoppingCartList)
 			{
 				OrderDetail orderDetail = new()
@@ -120,9 +120,9 @@ namespace TestShopProject.Areas.Customer.Controllers
 					Count = cart.Count,
 
 				};
-				_unitOfWork.OrderDetail.Add(orderDetail);
+				await _unitOfWork.OrderDetail.Add(orderDetail);
 			}
-			_unitOfWork.Save();
+			await _unitOfWork.Save();
 
 			if (applicationUser.CompanyId.GetValueOrDefault() == 0)
 			{
@@ -160,11 +160,11 @@ namespace TestShopProject.Areas.Customer.Controllers
 
 				//service creating
 				var service = new SessionService();
-				Session session = service.Create(options);
+				Session session = await service.CreateAsync(options);
 
 				//updating ids
-				_unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-				_unitOfWork.Save();
+				await _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+				await _unitOfWork.Save();
 				Response.Headers.Add("Location",session.Url);
 
 				return new StatusCodeResult(303);
@@ -173,63 +173,63 @@ namespace TestShopProject.Areas.Customer.Controllers
 			return RedirectToAction(nameof(OrderConfirmation), new {id = ShoppingCartVM.OrderHeader.Id});
 		}
 
-		public IActionResult OrderConfirmation(int id)
+		public async Task<IActionResult> OrderConfirmation(int id)
 		{
-			OrderHeader orderHeader =
+			OrderHeader orderHeader = await 
 				_unitOfWork.OrderHeader.Get(x => x.Id == id, includeProperties: "ApplicationUser");
 
 			if (orderHeader.PaymentStatus!=StaticDetails.PaymentStatusDelayedPayment)
 			{
 				//this is an order by customer.
 				var service = new SessionService();
-				Session session = service.Get(orderHeader.SessionId);
+				Session session = await service.GetAsync(orderHeader.SessionId);
 
 				if (session.PaymentStatus.ToLower() == "paid")
 				{
 					//_unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-					_unitOfWork.OrderHeader.UpdateStripePaymentId(id, session.Id, session.PaymentIntentId);
-					_unitOfWork.OrderHeader.UpdateStatus(id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved );
-					_unitOfWork.Save();
+					await _unitOfWork.OrderHeader.UpdateStripePaymentId(id, session.Id, session.PaymentIntentId);
+					await _unitOfWork.OrderHeader.UpdateStatus(id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved );
+					await _unitOfWork.Save();
 				}
 			}
 
-			List<ShoppingCart> carts = _unitOfWork.ShoppingCart.GetAll(x=> x.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
-			_unitOfWork.ShoppingCart.RemoveRange(carts);
-			_unitOfWork.Save();
+			List<ShoppingCart> carts = (await _unitOfWork.ShoppingCart.GetAll(x=> x.ApplicationUserId == orderHeader.ApplicationUserId)).ToList();
+			await _unitOfWork.ShoppingCart.RemoveRange(carts);
+			await _unitOfWork.Save();
 			return View(id);
 		}
 
-		public IActionResult Plus(int cartId)
+		public async Task<IActionResult> Plus(int cartId)
 		{
-			var cartFromDb = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
+			var cartFromDb = await _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
 			cartFromDb.Count += 1;
-			_unitOfWork.ShoppingCart.Update(cartFromDb);
-			_unitOfWork.Save();
+			await _unitOfWork.ShoppingCart.Update(cartFromDb);
+			await _unitOfWork.Save();
 			return RedirectToAction(nameof(Index));
 		}
 
-		public IActionResult Minus(int cartId)
+		public async Task<IActionResult> Minus(int cartId)
 		{
-			var cartFromDb = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
+			var cartFromDb = await _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
 			if (cartFromDb.Count <= 1)
 			{
-				_unitOfWork.ShoppingCart.Remove(cartFromDb);
+				await _unitOfWork.ShoppingCart.Remove(cartFromDb);
 			}
 			else
 			{
 				cartFromDb.Count -= 1;
-				_unitOfWork.ShoppingCart.Update(cartFromDb);
+				await _unitOfWork.ShoppingCart.Update(cartFromDb);
 			}
 
-			_unitOfWork.Save();
+			await _unitOfWork.Save();
 			return RedirectToAction(nameof(Index));
 		}
 
-		public IActionResult Remove(int cartId)
+		public async Task<IActionResult> Remove(int cartId)
 		{
-			var cartFromDb = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
-			_unitOfWork.ShoppingCart.Remove(cartFromDb);
-			_unitOfWork.Save();
+			var cartFromDb = await _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
+			await _unitOfWork.ShoppingCart.Remove(cartFromDb);
+			await _unitOfWork.Save();
 			return RedirectToAction(nameof(Index));
 		}
 

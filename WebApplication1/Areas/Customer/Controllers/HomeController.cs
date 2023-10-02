@@ -19,16 +19,16 @@ namespace TestShopProject.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-	        IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties:"Category");
+	        IEnumerable<Product> productList = await _unitOfWork.Product.GetAll(includeProperties:"Category");
             return View(productList);
         }
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
 	        ShoppingCart cart = new()
 	        {
-		        Product = _unitOfWork.Product.Get(x => x.Id == id, "Category"),
+		        Product = await _unitOfWork.Product.Get(x => x.Id == id, "Category"),
                 Count = 1,
                 ProductId = id
 	        };
@@ -36,30 +36,30 @@ namespace TestShopProject.Areas.Customer.Controllers
         }
         [HttpPost]
         [Authorize]
-        public IActionResult Details(ShoppingCart shoppingCart)
+        public async Task<IActionResult> Details(ShoppingCart shoppingCart)
         {
 	        shoppingCart.Id = default(int);
 	        ClaimsIdentity claimsIdentity= (ClaimsIdentity)User.Identity;
 	        string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.ApplicationUserId = userId;
 
-            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(x => x.ApplicationUserId == userId &&
+            ShoppingCart cartFromDb = await _unitOfWork.ShoppingCart.Get(x => x.ApplicationUserId == userId &&
 										x.ProductId == shoppingCart.ProductId);
             if (cartFromDb is not null)
             {
                 //cart already exist
                 cartFromDb.Count += shoppingCart.Count;
-                _unitOfWork.ShoppingCart.Update(cartFromDb);
+                await _unitOfWork.ShoppingCart.Update(cartFromDb);
             }
             else
             {
 				//add new cart
-				_unitOfWork.ShoppingCart.Add(shoppingCart);
+				await _unitOfWork.ShoppingCart.Add(shoppingCart);
 			}
 
             TempData["success"] = "Cart updated successfully";
 
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
 
 	        return RedirectToAction(nameof(Index));
         }

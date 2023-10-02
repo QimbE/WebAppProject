@@ -13,7 +13,7 @@ public class ShoppingCartRepository:Repository<ShoppingCart>, IShoppingCartRepos
 		_db = db;
 	}
 
-	public void Update(ShoppingCart obj)
+	public async Task Update(ShoppingCart obj)
 	{
 		_db.ShoppingCarts.Update(obj);
 	}

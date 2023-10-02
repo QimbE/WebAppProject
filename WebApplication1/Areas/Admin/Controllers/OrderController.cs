@@ -27,21 +27,21 @@ namespace TestShopProject.Areas.Admin.Controllers
 		{
 			return View();
 		}
-		public IActionResult Details(int orderId)
+		public async Task<IActionResult> Details(int orderId)
 		{
 			OrderVM= new()
 			{
-				OrderHeader = _unitOfWork.OrderHeader.Get(x=> x.Id==orderId, includeProperties:"ApplicationUser"),
-				OrderDetails = _unitOfWork.OrderDetail.GetAll(x=>x.OrderHeaderId==orderId, includeProperties:"Product")
+				OrderHeader = await _unitOfWork.OrderHeader.Get(x => x.Id == orderId, includeProperties: "ApplicationUser"),
+				OrderDetails = await _unitOfWork.OrderDetail.GetAll(x => x.OrderHeaderId == orderId, includeProperties: "Product")
 			};
 			return View(OrderVM);
 		}
 
 		[HttpPost]
 		[Authorize(Roles=StaticDetails.Role_Admin+","+StaticDetails.Role_Employee)]
-        public IActionResult UpdateOrderDetail(int orderId)
+        public async Task<IActionResult> UpdateOrderDetail(int orderId)
         {
-            var orderHeaderFromDb = _unitOfWork.OrderHeader.Get(x => x.Id==OrderVM.OrderHeader.Id);
+            var orderHeaderFromDb = await _unitOfWork.OrderHeader.Get(x => x.Id==OrderVM.OrderHeader.Id);
 
             orderHeaderFromDb.Name = OrderVM.OrderHeader.Name;
             orderHeaderFromDb.PhoneNumber = OrderVM.OrderHeader.PhoneNumber;
@@ -59,8 +59,8 @@ namespace TestShopProject.Areas.Admin.Controllers
                 orderHeaderFromDb.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
             }
 
-			_unitOfWork.OrderHeader.Update(orderHeaderFromDb);
-			_unitOfWork.Save();
+			await _unitOfWork.OrderHeader.Update(orderHeaderFromDb);
+			await _unitOfWork.Save();
 
             TempData["Success"] = "Order Details Updated Successfully.";
 
@@ -69,10 +69,10 @@ namespace TestShopProject.Areas.Admin.Controllers
 
         [HttpPost]
         [Authorize(Roles = StaticDetails.Role_Admin + "," + StaticDetails.Role_Employee)]
-        public IActionResult StartProcessing()
+        public async Task<IActionResult> StartProcessing()
         {
-			_unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, StaticDetails.StatusInProcess);
-            _unitOfWork.Save();
+			await _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, StaticDetails.StatusInProcess);
+            await _unitOfWork.Save();
 
             TempData["Success"] = "Order Details Updated Successfully.";
 
@@ -80,9 +80,9 @@ namespace TestShopProject.Areas.Admin.Controllers
         }
         [HttpPost]
         [Authorize(Roles = StaticDetails.Role_Admin + "," + StaticDetails.Role_Employee)]
-        public IActionResult ShipOrder()
+        public async Task<IActionResult> ShipOrder()
         {
-            var orderHeader = _unitOfWork.OrderHeader.Get(x => x.Id == OrderVM.OrderHeader.Id);
+            var orderHeader = await _unitOfWork.OrderHeader.Get(x => x.Id == OrderVM.OrderHeader.Id);
 
             orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
 			orderHeader.Carrier = OrderVM.OrderHeader.Carrier;
@@ -94,8 +94,8 @@ namespace TestShopProject.Areas.Admin.Controllers
                 orderHeader.PaymentDueDate = DateTime.Now.AddDays(30);
             }
 
-            _unitOfWork.OrderHeader.Update(orderHeader);
-            _unitOfWork.Save();
+            await _unitOfWork.OrderHeader.Update(orderHeader);
+            await _unitOfWork.Save();
 
             TempData["Success"] = "Order Shipped Successfully.";
 
@@ -104,9 +104,9 @@ namespace TestShopProject.Areas.Admin.Controllers
 
         [HttpPost]
         [Authorize(Roles = StaticDetails.Role_Admin + "," + StaticDetails.Role_Employee)]
-        public IActionResult CancelOrder()
+        public async Task<IActionResult> CancelOrder()
         {
-            var orderHeader = _unitOfWork.OrderHeader.Get(x => x.Id == OrderVM.OrderHeader.Id);
+            var orderHeader = await _unitOfWork.OrderHeader.Get(x => x.Id == OrderVM.OrderHeader.Id);
 
             if (orderHeader.PaymentStatus == StaticDetails.PaymentStatusApproved)
             {
@@ -116,15 +116,15 @@ namespace TestShopProject.Areas.Admin.Controllers
                     PaymentIntent = orderHeader.PaymentIntentId
                 };
                 var service = new RefundService();
-                Refund refund = service.Create(options);
+                Refund refund = await service.CreateAsync(options);
 
-                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, StaticDetails.StatusCancelled, StaticDetails.StatusRefunded);
+                await _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, StaticDetails.StatusCancelled, StaticDetails.StatusRefunded);
             }
             else
             {
-                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, StaticDetails.StatusCancelled, StaticDetails.StatusCancelled);
+                await _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, StaticDetails.StatusCancelled, StaticDetails.StatusCancelled);
             }
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
 
             TempData["Success"] = "Order Cancelled Successfully.";
 
@@ -133,11 +133,11 @@ namespace TestShopProject.Areas.Admin.Controllers
 
         [HttpPost]
         [ActionName("Details")]
-        public IActionResult Details_PAY_NOW()
+        public async Task<IActionResult> Details_PAY_NOW()
         {
-            OrderVM.OrderHeader = _unitOfWork.OrderHeader
+            OrderVM.OrderHeader = await _unitOfWork.OrderHeader
                 .Get(x => x.Id == OrderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
-            OrderVM.OrderDetails = _unitOfWork.OrderDetail
+            OrderVM.OrderDetails = await _unitOfWork.OrderDetail
                 .GetAll(x => x.OrderHeaderId == OrderVM.OrderHeader.Id, includeProperties: "Product");
 
             //stripe logic
@@ -172,33 +172,33 @@ namespace TestShopProject.Areas.Admin.Controllers
 
             //service creating
             var service = new SessionService();
-            Session session = service.Create(options);
+            Session session = await service.CreateAsync(options);
 
             //updating ids
-            _unitOfWork.OrderHeader.UpdateStripePaymentId(OrderVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-            _unitOfWork.Save();
+            await _unitOfWork.OrderHeader.UpdateStripePaymentId(OrderVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+            await _unitOfWork.Save();
             Response.Headers.Add("Location", session.Url);
 
             return new StatusCodeResult(303);
         }
 
-        public IActionResult PaymentConfirmation(int orderHeaderId)
+        public async Task<IActionResult> PaymentConfirmation(int orderHeaderId)
         {
-            OrderHeader orderHeader =
+            OrderHeader orderHeader = await 
                 _unitOfWork.OrderHeader.Get(x => x.Id == orderHeaderId);
 
             if (orderHeader.PaymentStatus == StaticDetails.PaymentStatusDelayedPayment)
             {
                 //this is an order by company.
                 var service = new SessionService();
-                Session session = service.Get(orderHeader.SessionId);
+                Session session = await service.GetAsync(orderHeader.SessionId);
 
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
                     //_unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-                    _unitOfWork.OrderHeader.UpdateStripePaymentId(orderHeaderId, session.Id, session.PaymentIntentId);
-                    _unitOfWork.OrderHeader.UpdateStatus(orderHeaderId, orderHeader.OrderStatus, StaticDetails.PaymentStatusApproved);
-                    _unitOfWork.Save();
+                    await _unitOfWork.OrderHeader.UpdateStripePaymentId(orderHeaderId, session.Id, session.PaymentIntentId);
+                    await _unitOfWork.OrderHeader.UpdateStatus(orderHeaderId, orderHeader.OrderStatus, StaticDetails.PaymentStatusApproved);
+                    await _unitOfWork.Save();
                 }
             }
 
@@ -207,20 +207,20 @@ namespace TestShopProject.Areas.Admin.Controllers
         #region API CALLS
 
         [HttpGet]
-        public IActionResult GetAll(string status)
+        public async Task<IActionResult> GetAll(string status)
         {
             IEnumerable<OrderHeader> objOrderHeaders;
 
             if (User.IsInRole(StaticDetails.Role_Admin) || User.IsInRole(StaticDetails.Role_Employee))
             {
-                objOrderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
+                objOrderHeaders = await _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
             }
             else
             {
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                objOrderHeaders = _unitOfWork.OrderHeader
+                objOrderHeaders = await _unitOfWork.OrderHeader
                     .GetAll(x=> x.ApplicationUserId == userId, includeProperties: "ApplicationUser");
             }
 

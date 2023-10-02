@@ -4,5 +4,5 @@ namespace TestShop.DataAccess.Repository.IRepository;
 
 public interface ICompanyRepository:IRepository<Company>
 {
-    void Update(Company obj);
+    Task Update(Company obj);
 }

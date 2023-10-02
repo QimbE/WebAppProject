@@ -12,7 +12,7 @@ public class CompanyRepository:Repository<Company>, ICompanyRepository
         _db = db;
     }
 
-    public void Update(Company obj)
+    public async Task Update(Company obj)
     {
         _db.Companies.Update(obj);
     }

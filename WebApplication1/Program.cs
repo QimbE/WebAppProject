@@ -1,3 +1,5 @@
+using Google.Apis.Auth.AspNetCore3;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +45,22 @@ namespace TestShopProject
                 options.LogoutPath = "/Identity/Account/Logout";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
+
+            //Google auth
+            builder.Services
+                .AddAuthentication(/*o =>
+                    {
+                        o.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+                        o.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+                        o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    }*/)
+                .AddCookie()
+                .AddGoogleOpenIdConnect(options =>
+                {
+                    options.ClientId = builder.Configuration.GetSection("Google").GetSection("ClientId");
+                    options.ClientSecret = builder.Configuration.GetSection("Google").GetSection("ClientSecret");
+                });
+
 
             //Session
             builder.Services.AddDistributedMemoryCache();

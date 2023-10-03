@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using TestShop.DataAccess.Data;
+using TestShop.DataAccess.DbInitializer;
 using TestShop.DataAccess.Repository;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
@@ -37,6 +38,9 @@ namespace TestShopProject
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
 	            .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            //Db initializer
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
             //Cookie routing
             builder.Services.ConfigureApplicationCookie(options =>
@@ -105,13 +109,27 @@ namespace TestShopProject
 
             app.UseSession();
 
-            app.MapRazorPages();
+
+            //Db initialize.
+            using (var scope = app.Services.CreateScope())
+            {
+	            var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+	            dbInitializer.InitializeAsync().GetAwaiter().GetResult();
+
+            }
+
+			app.MapRazorPages();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        private static async Task SeedDatabaseAsync()
+        {
+	        
         }
     }
 }

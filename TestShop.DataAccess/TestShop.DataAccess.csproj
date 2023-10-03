@@ -18,6 +18,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestShop.Models\TestShop.Models.csproj" />
+    <ProjectReference Include="..\TestShop.Utility\TestShop.Utility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DbInitializer\" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
+using TestShop.Utility;
 
 namespace TestShopProject.Areas.Customer.Controllers
 {
@@ -50,16 +52,20 @@ namespace TestShopProject.Areas.Customer.Controllers
                 //cart already exist
                 cartFromDb.Count += shoppingCart.Count;
                 await _unitOfWork.ShoppingCart.Update(cartFromDb);
+                await _unitOfWork.Save();
             }
             else
             {
 				//add new cart
 				await _unitOfWork.ShoppingCart.Add(shoppingCart);
+                await _unitOfWork.Save();
+                HttpContext.Session.SetInt32(StaticDetails.SessionCart, (await _unitOfWork.ShoppingCart
+                    .GetAll(x => x.ApplicationUserId == userId)).Count());
 			}
 
             TempData["success"] = "Cart updated successfully";
 
-            await _unitOfWork.Save();
+            
 
 	        return RedirectToAction(nameof(Index));
         }

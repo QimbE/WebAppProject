@@ -214,7 +214,9 @@ namespace TestShopProject.Areas.Customer.Controllers
 			if (cartFromDb.Count <= 1)
 			{
 				await _unitOfWork.ShoppingCart.Remove(cartFromDb);
-			}
+                HttpContext.Session.SetInt32(StaticDetails.SessionCart, (await _unitOfWork.ShoppingCart
+                    .GetAll(x => x.ApplicationUserId == cartFromDb.ApplicationUserId)).Count() - 1);
+            }
 			else
 			{
 				cartFromDb.Count -= 1;
@@ -228,8 +230,11 @@ namespace TestShopProject.Areas.Customer.Controllers
 		public async Task<IActionResult> Remove(int cartId)
 		{
 			var cartFromDb = await _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
+
 			await _unitOfWork.ShoppingCart.Remove(cartFromDb);
-			await _unitOfWork.Save();
+            HttpContext.Session.SetInt32(StaticDetails.SessionCart, (await _unitOfWork.ShoppingCart
+                .GetAll(x => x.ApplicationUserId == cartFromDb.ApplicationUserId)).Count()-1);
+            await _unitOfWork.Save();
 			return RedirectToAction(nameof(Index));
 		}
 

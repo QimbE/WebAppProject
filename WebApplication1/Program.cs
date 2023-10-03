@@ -44,6 +44,15 @@ namespace TestShopProject
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
 
+            //Session
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(100);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             //Stub code
             builder.Services.AddScoped<IEmailSender, EmailSender>();
 
@@ -75,6 +84,8 @@ namespace TestShopProject
             app.UseAuthentication();
 
 			app.UseAuthorization();
+
+            app.UseSession();
 
             app.MapRazorPages();
 

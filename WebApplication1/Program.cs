@@ -61,8 +61,8 @@ namespace TestShopProject
                 .AddCookie()
                 .AddGoogleOpenIdConnect(options =>
                 {
-                    options.ClientId = builder.Configuration.GetSection("Google").GetSection("ClientId");
-                    options.ClientSecret = builder.Configuration.GetSection("Google").GetSection("ClientSecret");
+                    options.ClientId = builder.Configuration.GetSection("Google").GetSection("ClientId").Value;
+                    options.ClientSecret = builder.Configuration.GetSection("Google").GetSection("ClientSecret").Value;
                 });
 
 
@@ -129,7 +129,7 @@ namespace TestShopProject
 
         private static async Task SeedDatabaseAsync()
         {
-	        
+
         }
     }
 }

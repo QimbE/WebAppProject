@@ -129,7 +129,7 @@ namespace TestShopProject.Areas.Customer.Controllers
 				//it is a regular user
 				//stripe logic
 
-				var domain = "https://"+HttpContext.Request.Host.Value+"/";
+				var domain = Request.Scheme + "://" + Request.Host.Value + "/";
 
 				var options = new SessionCreateOptions
 				{

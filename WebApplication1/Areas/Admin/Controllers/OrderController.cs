@@ -141,7 +141,7 @@ namespace TestShopProject.Areas.Admin.Controllers
                 .GetAll(x => x.OrderHeaderId == OrderVM.OrderHeader.Id, includeProperties: "Product");
 
             //stripe logic
-            var domain = "https://" + HttpContext.Request.Host.Value + "/";
+            var domain = Request.Scheme+"://" + Request.Host.Value + "/";
 
             var options = new SessionCreateOptions
             {

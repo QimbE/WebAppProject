@@ -126,10 +126,5 @@ namespace TestShopProject
 
             app.Run();
         }
-
-        private static async Task SeedDatabaseAsync()
-        {
-
-        }
     }
 }

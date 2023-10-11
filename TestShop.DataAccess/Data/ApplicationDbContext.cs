@@ -7,13 +7,29 @@ namespace TestShop.DataAccess.Data
 {
     public class ApplicationDbContext: IdentityDbContext<IdentityUser>
     {
+        /// <summary>
+        /// Product categories
+        /// </summary>
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Company> Companies { get; set; }
+		/// <summary>
+		/// List of customer-companies
+		/// </summary>
+		public DbSet<Company> Companies { get; set; }
+        /// <summary>
+        /// User's shopping carts. One for product.
+        /// </summary>
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        /// <summary>
+        /// Header order info.
+        /// </summary>
         public DbSet<OrderHeader> OrderHeaders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        /// <summary>
+        /// Images of products
+        /// </summary>
+        public DbSet<ProductImage> ProductImages { get; set; }
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             :base(options)
         {

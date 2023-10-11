@@ -72,28 +72,28 @@ namespace TestShopProject.Areas.Admin.Controllers
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"images\product");
 
-                    if (!string.IsNullOrEmpty(productVm.Product.ImageUrl))
-                    {
-						//delete old image
-						var oldImagePath = 
-							Path.Combine(wwwRootPath, productVm.Product.ImageUrl.TrimStart('\\'));
-						if (System.IO.File.Exists(oldImagePath))
-						{
-							System.IO.File.Delete(oldImagePath);
-						}
+      //              if (!string.IsNullOrEmpty(productVm.Product.ImageUrl))
+      //              {
+						////delete old image
+						//var oldImagePath = 
+						//	Path.Combine(wwwRootPath, productVm.Product.ImageUrl.TrimStart('\\'));
+						//if (System.IO.File.Exists(oldImagePath))
+						//{
+						//	System.IO.File.Delete(oldImagePath);
+						//}
 
-                    }
-                    using (FileStream fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
-                    {
-	                    await file.CopyToAsync(fileStream);
+      //              }
+      //              using (FileStream fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+      //              {
+	     //               await file.CopyToAsync(fileStream);
                         
-                    }
+      //              }
 
-                    productVm.Product.ImageUrl = @"\images\product\" + fileName;
+      //              productVm.Product.ImageUrl = @"\images\product\" + fileName;
 	            }
 	            else
 	            {
-		            productVm.Product.ImageUrl = "";
+		            //productVm.Product.ImageUrl = "";
 
 	            }
 
@@ -139,14 +139,14 @@ namespace TestShopProject.Areas.Admin.Controllers
 		        return Json(new { success = false, message = "Error while deleting" });
 	        }
 
-            //delete image
-			var oldImagePath =
-								Path.Combine(_webHostEnvironment.WebRootPath,
-								productToBeDeleted.ImageUrl.TrimStart('\\'));
-			if (System.IO.File.Exists(oldImagePath))
-			{
-				System.IO.File.Delete(oldImagePath);
-			}
+   //         //delete image
+			//var oldImagePath =
+			//					Path.Combine(_webHostEnvironment.WebRootPath,
+			//					productToBeDeleted.ImageUrl.TrimStart('\\'));
+			//if (System.IO.File.Exists(oldImagePath))
+			//{
+			//	System.IO.File.Delete(oldImagePath);
+			//}
 
             await _unitOfWork.Product.Remove(productToBeDeleted);
             await _unitOfWork.Save();

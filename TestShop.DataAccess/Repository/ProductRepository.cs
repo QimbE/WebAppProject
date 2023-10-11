@@ -29,10 +29,10 @@ public class ProductRepository: Repository<Product>, IProductRepository
             objectFromDb.Result.Author = obj.Author;
             objectFromDb.Result.Price50 = obj.Price50;
             objectFromDb.Result.Price100 = obj.Price100;
-            if (obj.ImageUrl != null)
-            {
-	            objectFromDb.Result.ImageUrl = obj.ImageUrl;
-            }
+            //if (obj.ImageUrl != null)
+            //{
+	           // objectFromDb.Result.ImageUrl = obj.ImageUrl;
+            //}
 	    }
     }
 

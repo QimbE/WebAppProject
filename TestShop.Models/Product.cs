@@ -49,7 +49,5 @@ namespace TestShop.Models
         [ForeignKey("CategoryId")]
         [ValidateNever]
 		public Category Category { get; set; }//TO DO: add many-to-many
-		[ValidateNever]
-		public string ImageUrl { get; set; }
 	}
 }

@@ -75,7 +75,6 @@ namespace TestShop.DataAccess.Data
                     Price50 = 12.99m,
                     Price100 = 10.99m,
                     CategoryId = 1,
-                    ImageUrl = ""
 				},
                 new Product
                 {
@@ -89,7 +88,6 @@ namespace TestShop.DataAccess.Data
                     Price50 = 10.99m,
                     Price100 = 9.99m,
                     CategoryId = 1,
-                    ImageUrl = ""
 				},
                 new Product
                 {
@@ -103,7 +101,6 @@ namespace TestShop.DataAccess.Data
                     Price50 = 9.49m,
                     Price100 = 8.99m,
                     CategoryId = 1,
-                    ImageUrl = ""
 				},
                 new Product
                 {
@@ -117,7 +114,6 @@ namespace TestShop.DataAccess.Data
                     Price50 = 8.49m,
                     Price100 = 7.99m,
                     CategoryId = 1,
-                    ImageUrl = ""
 				},
                 new Product
                 {
@@ -131,7 +127,6 @@ namespace TestShop.DataAccess.Data
                     Price50 = 7.49m,
                     Price100 = 6.99m,
                     CategoryId = 1,
-                    ImageUrl = ""
 				}
             );
         }

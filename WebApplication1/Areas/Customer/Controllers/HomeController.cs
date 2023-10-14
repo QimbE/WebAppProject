@@ -23,14 +23,14 @@ namespace TestShopProject.Areas.Customer.Controllers
 
         public async Task<IActionResult> Index()
         {
-	        IEnumerable<Product> productList = await _unitOfWork.Product.GetAll(includeProperties:"Category");
+	        IEnumerable<Product> productList = await _unitOfWork.Product.GetAll(includeProperties:"Category,ProductImages");
             return View(productList);
         }
         public async Task<IActionResult> Details(int id)
         {
 	        ShoppingCart cart = new()
 	        {
-		        Product = await _unitOfWork.Product.Get(x => x.Id == id, "Category"),
+		        Product = await _unitOfWork.Product.Get(x => x.Id == id, "Category,ProductImages"),
                 Count = 1,
                 ProductId = id
 	        };

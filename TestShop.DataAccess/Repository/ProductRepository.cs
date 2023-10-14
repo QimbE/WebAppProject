@@ -17,18 +17,19 @@ public class ProductRepository: Repository<Product>, IProductRepository
     }
     public async Task Update(Product obj)
     {
-	    var objectFromDb = _db.Products.FirstOrDefaultAsync(x => x.Id == obj.Id);
+	    var objectFromDb = await _db.Products.FirstOrDefaultAsync(x => x.Id == obj.Id);
 	    if (objectFromDb != null)
 	    {
-            objectFromDb.Result.Title = obj.Title;
-            objectFromDb.Result.Description = obj.Description;
-            objectFromDb.Result.CategoryId = obj.CategoryId;
-            objectFromDb.Result.ISBN = obj.ISBN;
-            objectFromDb.Result.Price = obj.Price;
-            objectFromDb.Result.ListPrice = obj.ListPrice;
-            objectFromDb.Result.Author = obj.Author;
-            objectFromDb.Result.Price50 = obj.Price50;
-            objectFromDb.Result.Price100 = obj.Price100;
+            objectFromDb.Title = obj.Title;
+            objectFromDb.Description = obj.Description;
+            objectFromDb.CategoryId = obj.CategoryId;
+            objectFromDb.ISBN = obj.ISBN;
+            objectFromDb.Price = obj.Price;
+            objectFromDb.ListPrice = obj.ListPrice;
+            objectFromDb.Author = obj.Author;
+            objectFromDb.Price50 = obj.Price50;
+            objectFromDb.Price100 = obj.Price100;
+            objectFromDb.ProductImages = obj.ProductImages;
             //if (obj.ImageUrl != null)
             //{
 	           // objectFromDb.Result.ImageUrl = obj.ImageUrl;

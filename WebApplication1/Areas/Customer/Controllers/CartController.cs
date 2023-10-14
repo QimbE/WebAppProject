@@ -34,8 +34,11 @@ namespace TestShopProject.Areas.Customer.Controllers
 				OrderHeader = new()
 			};
 
+			IEnumerable<ProductImage> productImages = await _unitOfWork.ProductImage.GetAll();
+
 			foreach (var shoppingCart in ShoppingCartVM.ShoppingCartList)
 			{
+				shoppingCart.Product.ProductImages = productImages.Where(x => x.ProductId == shoppingCart.ProductId).ToList();
 				shoppingCart.Price = GetPriceBasedOnQuantity(shoppingCart);
 				ShoppingCartVM.OrderHeader.OrderTotal += (shoppingCart.Price * shoppingCart.Count);
 			}

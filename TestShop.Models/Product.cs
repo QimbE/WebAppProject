@@ -51,6 +51,6 @@ namespace TestShop.Models
 		public Category Category { get; set; }//TO DO: add many-to-many
 
 		[ValidateNever]
-        List<ProductImage> ProductImages { get; set; }
+        public List<ProductImage> ProductImages { get; set; }
     }
 }

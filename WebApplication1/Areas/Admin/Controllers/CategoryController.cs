@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Concurrent;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
+using TestShop.Models.ViewModels;
 using TestShop.Utility;
 
 namespace TestShopProject.Areas.Admin.Controllers
@@ -16,96 +20,87 @@ namespace TestShopProject.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> objCategoryList = await _unitOfWork.Category.GetAll();
-            return View(objCategoryList);
+	        return View();
         }
-        //GET
-        public IActionResult Create()
-        {
-            return View();
-        }
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Category obj)
-        {
-            if (ModelState.IsValid)
-            {
-                await _unitOfWork.Category.Add(obj);
-                await _unitOfWork.Save();
-                TempData["success"] = "Category created successfully";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return View(obj);
-            }
-        }
-        //GET
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Category categoryFromDb = await _unitOfWork.Category.Get(x => x.Id == id);
 
-            if (categoryFromDb == null)
-            {
-                return NotFound();
-            }
+		/// <summary>
+		/// HtttpGet for upsert action
+		/// </summary>
+		/// <param name="id">Category id</param>
+		/// <returns>Upsert View</returns>
+		public async Task<IActionResult> Upsert(int? id)
+		{
+			if (id is null || id == 0)
+			{
+				//Create case
+				return View(new Category());
+			}
+			else
+			{
+				//Update case
+				Category category = await _unitOfWork.Category.Get(x => x.Id == id);
+				return View(category);
+			}
 
-            return View(categoryFromDb);
-        }
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Category obj)
+		}
+
+		/// <summary>
+		/// HttpPost upsert action method
+		/// </summary>
+		/// <param name="id">Category id</param>
+		/// <returns>Redirects to index page if success, else returns Upsert View</returns>
+		[HttpPost, ActionName("Upsert")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpsertPOST(Category? obj)
+		{
+			if (ModelState.IsValid)
+			{
+				if (obj.Id == 0)
+				{
+					await _unitOfWork.Category.Add(obj);
+				}
+				else
+				{
+					await _unitOfWork.Category.Update(obj);
+				}
+				await _unitOfWork.Save();
+				TempData["success"] = (obj.Id != 0) ? "Category updated successfully" : "Category created successfully";
+				return RedirectToAction(nameof(Index));
+			}
+			else
+			{
+				return View(obj);
+			}
+		}
+
+		#region API CALLS
+
+		[HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            if (ModelState.IsValid)
-            {
-                await _unitOfWork.Category.Update(obj);
-                await _unitOfWork.Save();
-                TempData["success"] = "Category updated successfully";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return View(obj);
-            }
+            IEnumerable<Category> categoryList = await _unitOfWork.Category.GetAll();
+            return Json(categoryList);
         }
-        //GET
+
+        [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Category categoryFromDb = await _unitOfWork.Category.Get(x => x.Id == id);
+			Category categoryToBeDeleted = await _unitOfWork.Category.Get(x => x.Id == id);
+			if (categoryToBeDeleted == null)
+			{
+				return Json(new { success = false, message = "Error while deleting" });
+			}
 
-            if (categoryFromDb == null)
-            {
-                return NotFound();
-            }
+			await _unitOfWork.Category.Remove(categoryToBeDeleted);
+			await _unitOfWork.Save();
 
-            return View(categoryFromDb);
-        }
-        //POST
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeletePOST(int? id)
-        {
-            Category obj = await _unitOfWork.Category.Get(x => x.Id == id);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            await _unitOfWork.Category.Remove(obj);
-            await _unitOfWork.Save();
-            TempData["success"] = "Category deleted successfully";
-            return RedirectToAction("Index");
-        }
-    }
+			return Json(new { success = true, message = "Delete Successful" });
+		}
+		#endregion
+
+
+	}
 }

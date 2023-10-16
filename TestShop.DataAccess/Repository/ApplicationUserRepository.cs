@@ -14,4 +14,8 @@ public class ApplicationUserRepository:Repository<ApplicationUser>, IApplication
 	}
 
 
+	public async Task Update(ApplicationUser applicationUser)
+	{
+		_db.ApplicationUsers.Update(applicationUser);
+	}
 }

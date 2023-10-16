@@ -13,6 +13,7 @@ using TestShop.DataAccess.Repository;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
 using TestShop.Utility;
+using TestShop.Utility.ModelBinder;
 
 namespace TestShopProject
 {
@@ -65,6 +66,12 @@ namespace TestShopProject
                     options.ClientSecret = builder.Configuration.GetSection("Google").GetSection("ClientSecret").Value;
                 });
 
+            builder.Services
+                .AddMvc(config =>
+            {
+	            //dot or comma decimal separator model binder
+				config.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
+            });
 
             //Session
             builder.Services.AddDistributedMemoryCache();

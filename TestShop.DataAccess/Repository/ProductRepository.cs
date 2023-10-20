@@ -22,7 +22,7 @@ public class ProductRepository: Repository<Product>, IProductRepository
 	    {
             objectFromDb.Title = obj.Title;
             objectFromDb.Description = obj.Description;
-            objectFromDb.CategoryId = obj.CategoryId;
+            objectFromDb.Categories = obj.Categories;
             objectFromDb.ISBN = obj.ISBN;
             objectFromDb.Price = obj.Price;
             objectFromDb.ListPrice = obj.ListPrice;

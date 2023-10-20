@@ -12,7 +12,16 @@ function loadDataTable() {
             { data: "isbn", "width": "15%" },
             { data: "listPrice", "width": "5%" },
             { data: "author", "width": "20%" },
-            { data: "category.name", "width": "10%" },
+            {
+                data: "categories",
+                "render": function (data) {
+                    var res = data.map(function(category) {
+                            return category.name;
+                        }).join(', ');
+                    return res;
+                },
+                "width": "10%"
+            },
             {
                 data: "id",
                 "render": function(data) {

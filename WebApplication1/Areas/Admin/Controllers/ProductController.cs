@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
+using System.Text.Json;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Identity;
+using Newtonsoft.Json;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
 using TestShop.Models.ViewModels;
@@ -24,7 +27,7 @@ namespace TestShopProject.Areas.Admin.Controllers
 		}
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Product> objProductList = await _unitOfWork.Product.GetAll(includeProperties:"Category");
+            IEnumerable<Product> objProductList = await _unitOfWork.Product.GetAll(includeProperties:"Categories");
             
             return View(objProductList);
         }
@@ -55,7 +58,8 @@ namespace TestShopProject.Areas.Admin.Controllers
             else
             {
                 //Update case
-                productVm.Product = await _unitOfWork.Product.Get(x => x.Id==id, includeProperties:"ProductImages");
+                productVm.Product = await _unitOfWork.Product.Get(x => x.Id==id, includeProperties:"ProductImages,Categories");
+                productVm.CategoryIds = productVm.Product.Categories.Select(x => x.Id);
 				return View(productVm);
 			}
 			
@@ -67,6 +71,8 @@ namespace TestShopProject.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+				productVm.Product.Categories = (await _unitOfWork.Category.GetAll(x => productVm.CategoryIds.Contains(x.Id))).ToList();
+
 				//First - upsert the product
 	            if (productVm.Product.Id == 0)
 	            {
@@ -169,8 +175,8 @@ namespace TestShopProject.Areas.Admin.Controllers
 		[HttpGet]
         public async Task<IActionResult> GetAll()
         {
-	        IEnumerable<Product> objProductList = await _unitOfWork.Product.GetAll(includeProperties: "Category");
-	        return Json(objProductList);
+	        IEnumerable<Product> objProductList = await _unitOfWork.Product.GetAll(includeProperties: "Categories");
+	        return Json(objProductList) ;
         }
 
         [HttpDelete]

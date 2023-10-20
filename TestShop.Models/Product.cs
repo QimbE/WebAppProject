@@ -45,10 +45,8 @@ namespace TestShop.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Price100 { get; set; }
 
-        public int CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
         [ValidateNever]
-		public Category Category { get; set; }//TO DO: add many-to-many
+		public List<Category> Categories { get; set; }
 
 		[ValidateNever]
         public List<ProductImage> ProductImages { get; set; }

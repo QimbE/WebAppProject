@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Stripe;
 using TestShop.DataAccess.Data;
 using TestShop.DataAccess.DbInitializer;
@@ -22,6 +24,13 @@ namespace TestShopProject
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            //Disable loops in many to many relation
+            builder.Services.AddMvc().AddJsonOptions(o =>
+	            {
+		            o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+				});
+
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

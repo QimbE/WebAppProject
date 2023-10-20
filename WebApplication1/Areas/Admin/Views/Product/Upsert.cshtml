@@ -56,9 +56,10 @@
 							<span asp-validation-for="Product.Price100" class="text-danger"></span>
 						</div>
 						<div class="form-floating py-2 col-12">
-							<select asp-for="Product.CategoryId" asp-items="@Model.CategoryList" class="form-control border-0 shadow"></select>
-							<label asp-for="Product.CategoryId" class="ms-2"></label>
-							<span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+							<select asp-for="CategoryIds" asp-items="@Model.CategoryList" class="form-control selectpicker border-0 shadow" data-live-search="true" multiple="multiple">
+							</select>
+							<label asp-for="Product.Categories" class="ms-2"></label>
+							
 						</div>
 						<div class="form-floating py-2 col-12">
 							<input type="file" name="files" class="form-control border-0 shadow" multiple/>
@@ -105,7 +106,12 @@
 </div>
 
 @section Scripts{
-	
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$('.selectpicker').selectpicker();
+
+		});
+	</script>
 	@{
 		<partial name="_TinyMCEInitPartial"/>
 		<partial name="_ValidationScriptsPartial" />

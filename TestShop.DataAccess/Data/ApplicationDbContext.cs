@@ -89,8 +89,7 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 19.99m,
                     Price = 15.99m,
                     Price50 = 12.99m,
-                    Price100 = 10.99m,
-                    CategoryId = 1,
+                    Price100 = 10.99m
 				},
                 new Product
                 {
@@ -102,8 +101,7 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 14.99m,
                     Price = 12.49m,
                     Price50 = 10.99m,
-                    Price100 = 9.99m,
-                    CategoryId = 1,
+                    Price100 = 9.99m
 				},
                 new Product
                 {
@@ -115,8 +113,7 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 12.99m,
                     Price = 10.99m,
                     Price50 = 9.49m,
-                    Price100 = 8.99m,
-                    CategoryId = 1,
+                    Price100 = 8.99m
 				},
                 new Product
                 {
@@ -128,8 +125,7 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 11.99m,
                     Price = 9.99m,
                     Price50 = 8.49m,
-                    Price100 = 7.99m,
-                    CategoryId = 1,
+                    Price100 = 7.99m
 				},
                 new Product
                 {
@@ -141,8 +137,7 @@ namespace TestShop.DataAccess.Data
                     ListPrice = 10.99m,
                     Price = 8.99m,
                     Price50 = 7.49m,
-                    Price100 = 6.99m,
-                    CategoryId = 1,
+                    Price100 = 6.99m
 				}
             );
         }

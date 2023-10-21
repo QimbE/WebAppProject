@@ -194,12 +194,13 @@ namespace TestShopProject.Areas.Customer.Controllers
 					await _unitOfWork.OrderHeader.UpdateStatus(id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved );
 					await _unitOfWork.Save();
 				}
-				HttpContext.Session.SetInt32(StaticDetails.SessionCart, 0);
+				
 			}
 
 			List<ShoppingCart> carts = (await _unitOfWork.ShoppingCart.GetAll(x=> x.ApplicationUserId == orderHeader.ApplicationUserId)).ToList();
 			await _unitOfWork.ShoppingCart.RemoveRange(carts);
 			await _unitOfWork.Save();
+			HttpContext.Session.SetInt32(StaticDetails.SessionCart, 0);
 			return View(id);
 		}
 

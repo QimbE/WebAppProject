@@ -151,24 +151,30 @@ namespace TestShopProject.Areas.Admin.Controllers
                 Mode = "payment",
             };
 
-            //adding goods to list
-            foreach (var item in OrderVM.OrderDetails)
+            await Task.Run(() =>
             {
-                var sessionLineItem = new SessionLineItemOptions
-                {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        UnitAmount = (long)(item.Price * 100), //20.50 == 2050
-                        Currency = "usd",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = item.Product.Title
-                        }
-                    },
-                    Quantity = item.Count
-                };
-                options.LineItems.Add(sessionLineItem);
-            }
+	            //adding goods to list
+	            foreach (var item in OrderVM.OrderDetails)
+	            {
+		            var sessionLineItem = new SessionLineItemOptions
+		            {
+			            PriceData = new SessionLineItemPriceDataOptions
+			            {
+				            UnitAmount = (long)(item.Price * 100), //20.50 == 2050
+				            Currency = "usd",
+				            ProductData = new SessionLineItemPriceDataProductDataOptions
+				            {
+					            Name = item.Product.Title
+				            }
+			            },
+			            Quantity = item.Count
+		            };
+		            options.LineItems.Add(sessionLineItem);
+	            }
+
+	            return Task.CompletedTask;
+			});
+
 
             //service creating
             var service = new SessionService();

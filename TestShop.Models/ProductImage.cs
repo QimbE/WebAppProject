@@ -9,6 +9,5 @@ public class ProductImage
 	[Required]
 	public string ImageUrl { get; set; }
 	public int ProductId { get; set; }
-	[ForeignKey("ProductId")]
 	public Product Product { get; set; }
 }

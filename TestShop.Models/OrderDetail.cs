@@ -6,18 +6,15 @@ namespace TestShop.Models;
 
 public class OrderDetail
 {
-	[Key]
 	public int Id { get; set; }
 
 	[Required]
 	public int OrderHeaderId { get; set; }
 	[ValidateNever]
-	[ForeignKey("OrderHeaderId")]
 	public OrderHeader OrderHeader { get; set; }
 
 	[Required]
 	public int ProductId { get; set; }
-	[ForeignKey("ProductId")]
 	[ValidateNever]
 	public Product Product { get; set; }
 

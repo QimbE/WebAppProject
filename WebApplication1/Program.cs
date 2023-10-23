@@ -1,4 +1,6 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
+using FluentValidation;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +18,11 @@ using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models;
 using TestShop.Utility;
 using TestShop.Utility.ModelBinder;
+using FluentValidation.AspNetCore;
+using FormHelper;
+using TestShop.Models.Models;
+using TestShop.Models.Validation;
+using TestShop.Models.ViewModels;
 
 namespace TestShopProject
 {
@@ -34,10 +41,22 @@ namespace TestShopProject
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddRazorPages();
+			builder.Services.AddRazorPages();
 
-            //EF DbContext connect to server
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+
+            //FormHelper and Fluent Validation
+            builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            builder.Services.AddControllersWithViews().AddFormHelper();
+
+
+            //Fluent validation
+            builder.Services.AddScoped<IValidator<TestShop.Models.Models.Product>, ProductValidator>();
+            builder.Services.AddScoped<IValidator<ProductVM>, ProductVMValidator>();
+            builder.Services.AddScoped<IValidator<Category>, CategoryValidator>();
+
+
+			//EF DbContext connect to server
+			builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
 
@@ -82,8 +101,8 @@ namespace TestShopProject
 				config.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
             });
 
-            //Session
-            builder.Services.AddDistributedMemoryCache();
+			//Session
+			builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(100);
@@ -125,6 +144,7 @@ namespace TestShopProject
 
             app.UseSession();
 
+            app.UseFormHelper();
 
             //Db initialize.
             using (var scope = app.Services.CreateScope())
@@ -140,7 +160,7 @@ namespace TestShopProject
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
-            app.Run();
+			app.Run();
         }
     }
 }

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 using System.Text.Json;
+using FluentValidation;
+using FormHelper;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Identity;
 using Newtonsoft.Json;
 using TestShop.DataAccess.Repository.IRepository;
@@ -19,11 +21,10 @@ namespace TestShopProject.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IValidator<ProductVM> validator)
         {
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
-
 		}
         public async Task<IActionResult> Index()
         {
@@ -64,86 +65,87 @@ namespace TestShopProject.Areas.Admin.Controllers
 			}
 			
         }
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upsert(ProductVM productVm, List<IFormFile>? files)
-        {
-            if (ModelState.IsValid)
-            {
+		//POST
+		[HttpPost, FormValidator]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Upsert(ProductVM productVm, List<IFormFile>? files)
+		{
+			if (ModelState.IsValid)
+			{
 				productVm.Product.Categories = (await _unitOfWork.Category.GetAll(x => productVm.CategoryIds.Contains(x.Id))).ToList();
 
 				//First - upsert the product
-	            if (productVm.Product.Id == 0)
-	            {
-		            await _unitOfWork.Product.Add(productVm.Product);
-	            }
-	            else
-	            {
-		            await _unitOfWork.Product.Update(productVm.Product);
-	            }
-	            await _unitOfWork.Save();
+				if (productVm.Product.Id == 0)
+				{
+					await _unitOfWork.Product.Add(productVm.Product);
+				}
+				else
+				{
+					await _unitOfWork.Product.Update(productVm.Product);
+				}
+				await _unitOfWork.Save();
 
 				//get the path to the wwwroot
 				string wwwRootPath = _webHostEnvironment.WebRootPath;
 
 				//Then - add images
-	            if (files != null)
-	            {
+				if (files != null && files.Count!=0)
+				{
 					//Thread safe
-		            ConcurrentBag<ProductImage> productImages = new ConcurrentBag<ProductImage>();
+					ConcurrentBag<ProductImage> productImages = new ConcurrentBag<ProductImage>();
 					await Parallel.ForEachAsync(files, async (file, CancellationToken) =>
-		            {
-			            //new file name
-			            string fileName = Guid.NewGuid().ToString()+ Environment.CurrentManagedThreadId + Path.GetExtension(file.FileName);
-			            //path to product folder
-			            string productPath = @"images\product\product-" + productVm.Product.Id;
-			            //Complete path to right folder
-			            string finalPath = Path.Combine(wwwRootPath, productPath);
+					{
+						//new file name
+						string fileName = Guid.NewGuid().ToString() + Environment.CurrentManagedThreadId + Path.GetExtension(file.FileName);
+						//path to product folder
+						string productPath = @"images\product\product-" + productVm.Product.Id;
+						//Complete path to right folder
+						string finalPath = Path.Combine(wwwRootPath, productPath);
 
-			            if (!Directory.Exists(finalPath))
-			            {
-				            //create directory if needed
-				            Directory.CreateDirectory(finalPath);
-			            }
+						if (!Directory.Exists(finalPath))
+						{
+							//create directory if needed
+							Directory.CreateDirectory(finalPath);
+						}
 
-			            await using (FileStream fileStream = new FileStream(Path.Combine(finalPath, fileName), FileMode.Create))
-			            {
-				            //copy file to directory
-				            await file.CopyToAsync(fileStream);
-			            }
+						await using (FileStream fileStream = new FileStream(Path.Combine(finalPath, fileName), FileMode.Create))
+						{
+							//copy file to directory
+							await file.CopyToAsync(fileStream);
+						}
 
-			            ProductImage productImage = new()
-			            {
-				            ImageUrl = @"\" + productPath + @"\" + fileName,
-				            ProductId = productVm.Product.Id,
-			            };
+						ProductImage productImage = new()
+						{
+							ImageUrl = @"\" + productPath + @"\" + fileName,
+							ProductId = productVm.Product.Id,
+						};
 
-			            productImages.Add(productImage);
+						productImages.Add(productImage);
 					});
 
 					productVm.Product.ProductImages = productImages.ToList();
 
 					await _unitOfWork.Product.Update(productVm.Product);
 					await _unitOfWork.Save();
-	            }
-                TempData["success"] = (productVm.Product.Id!=0)? "Product updated successfully": "Product created successfully";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-				//provide the category list again
-	            productVm.CategoryList = (await _unitOfWork.Category
-		            .GetAll())
-		            .Select(x => new SelectListItem
-		            {
-			            Text = x.Name,
-			            Value = x.Id.ToString()
-		            });
-	            return View(productVm);
+				}
+				TempData["success"] = (productVm.Product.Id != 0) ? "Product updated successfully" : "Product created successfully";
+				return FormResult.CreateSuccessResult("Success",Url.Action(nameof(Index)));
 			}
-        }
-        public async Task<IActionResult> DeleteImage(int? imageId)
+			else
+			{
+				//provide the category list again
+				productVm.CategoryList = (await _unitOfWork.Category
+					.GetAll())
+					.Select(x => new SelectListItem
+					{
+						Text = x.Name,
+						Value = x.Id.ToString()
+					});
+				return FormResult.CreateErrorResultWithObject(productVm, "bad request", Url.Action(nameof(Upsert)));
+			}
+		}
+
+		public async Task<IActionResult> DeleteImage(int? imageId)
         {
 	        var imageToBeDeleted = await _unitOfWork.ProductImage.Get(x => x.Id == imageId);
 	        int productId = imageToBeDeleted.ProductId;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Concurrent;
+using FormHelper;
 using TestShop.DataAccess.Repository.IRepository;
 using TestShop.Models.Models;
 using TestShop.Models.ViewModels;
@@ -52,7 +53,7 @@ namespace TestShopProject.Areas.Admin.Controllers
 		/// </summary>
 		/// <param name="id">Category id</param>
 		/// <returns>Redirects to index page if success, else returns Upsert View</returns>
-		[HttpPost, ActionName("Upsert")]
+		[HttpPost,FormValidator(ViewName = "Upsert"), ActionName("Upsert")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> UpsertPOST(Category? obj)
 		{
@@ -68,10 +69,11 @@ namespace TestShopProject.Areas.Admin.Controllers
 				}
 				await _unitOfWork.Save();
 				TempData["success"] = (obj.Id != 0) ? "Category updated successfully" : "Category created successfully";
-				return RedirectToAction(nameof(Index));
+				return FormResult.CreateSuccessResult("Success", Url.Action(nameof(Index)));
 			}
 			else
 			{
+				return FormResult.CreateErrorResultWithObject(obj, "something went wrong", nameof(Upsert));
 				return View(obj);
 			}
 		}

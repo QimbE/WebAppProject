@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TestShop.DataAccess.Data;
 using TestShop.DataAccess.Repository.IRepository;
-using TestShop.Models;
+using TestShop.Models.Models;
 
 namespace TestShop.DataAccess.Repository;
 

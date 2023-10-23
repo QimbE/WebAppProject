@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TestShop.DataAccess.Data;
-using TestShop.Models;
+using TestShop.Models.Models;
 using TestShop.Utility;
 
 namespace TestShop.DataAccess.DbInitializer;

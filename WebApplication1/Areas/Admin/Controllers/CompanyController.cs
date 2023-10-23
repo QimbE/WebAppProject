@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 using TestShop.DataAccess.Repository.IRepository;
-using TestShop.Models;
+using TestShop.Models.Models;
 using TestShop.Models.ViewModels;
 using TestShop.Utility;
 

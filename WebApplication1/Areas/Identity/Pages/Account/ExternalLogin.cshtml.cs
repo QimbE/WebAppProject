@@ -17,8 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using TestShop.Models;
 using TestShop.Utility;
+using TestShop.Models.Models;
 
 namespace TestShopProject.Areas.Identity.Pages.Account
 {

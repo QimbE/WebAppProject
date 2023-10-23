@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace TestShop.Models
+namespace TestShop.Models.Models
 {
     public class Product
     {
@@ -22,7 +22,7 @@ namespace TestShop.Models
 
         [Required]
         [Display(Name = "List Price")]
-        [Range(1,1000)]
+        [Range(1, 1000)]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal ListPrice { get; set; }
 
@@ -45,9 +45,9 @@ namespace TestShop.Models
         public decimal Price100 { get; set; }
 
         [ValidateNever]
-		public List<Category> Categories { get; set; }
+        public List<Category> Categories { get; set; }
 
-		[ValidateNever]
+        [ValidateNever]
         public List<ProductImage> ProductImages { get; set; }
     }
 }

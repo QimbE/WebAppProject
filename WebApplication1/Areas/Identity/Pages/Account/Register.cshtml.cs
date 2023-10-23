@@ -22,12 +22,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using TestShop.DataAccess.Repository.IRepository;
-using TestShop.Models;
+using TestShop.Models.Models;
 using TestShop.Utility;
 
 namespace TestShopProject.Areas.Identity.Pages.Account
 {
-	public class RegisterModel : PageModel
+    public class RegisterModel : PageModel
 	{
 		private readonly SignInManager<IdentityUser> _signInManager;
 		private readonly UserManager<IdentityUser> _userManager;

@@ -1,4 +1,4 @@
-namespace TestShop.Models
+namespace TestShop.Models.ViewModels
 {
     public class ErrorViewModel
     {

@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Stripe.Checkout;
 using TestShop.DataAccess.Repository.IRepository;
-using TestShop.Models;
 using TestShop.Models.ViewModels;
 using TestShop.Utility;
+using TestShop.Models.Models;
 
 namespace TestShopProject.Areas.Customer.Controllers
 {
-	[Area("Customer")]
+    [Area("Customer")]
 	[Authorize]
 	public class CartController : Controller
 	{

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TestShop.Models;
+using TestShop.Models.Models;
 
 namespace TestShop.DataAccess.Data
 {
-	public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 	{
 		/// <summary>
 		/// Product categories

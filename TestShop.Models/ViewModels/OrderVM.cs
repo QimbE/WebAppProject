@@ -1,4 +1,6 @@
-﻿namespace TestShop.Models.ViewModels;
+﻿using TestShop.Models.Models;
+
+namespace TestShop.Models.ViewModels;
 
 public class OrderVM
 {

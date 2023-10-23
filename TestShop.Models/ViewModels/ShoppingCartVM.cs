@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using TestShop.Models.Models;
 
 namespace TestShop.Models.ViewModels;
 

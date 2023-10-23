@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TestShop.DataAccess.Repository.IRepository;
-using TestShop.Models;
+using TestShop.Models.Models;
+using TestShop.Models.ViewModels;
 using TestShop.Utility;
 
 namespace TestShopProject.Areas.Customer.Controllers

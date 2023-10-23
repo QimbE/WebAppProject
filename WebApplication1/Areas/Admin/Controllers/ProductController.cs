@@ -7,9 +7,9 @@ using System.Text.Json;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Identity;
 using Newtonsoft.Json;
 using TestShop.DataAccess.Repository.IRepository;
-using TestShop.Models;
 using TestShop.Models.ViewModels;
 using TestShop.Utility;
+using TestShop.Models.Models;
 
 namespace TestShopProject.Areas.Admin.Controllers
 {

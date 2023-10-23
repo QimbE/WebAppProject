@@ -1,4 +1,4 @@
-﻿using TestShop.Models;
+﻿using TestShop.Models.Models;
 
 namespace TestShop.DataAccess.Repository.IRepository;
 

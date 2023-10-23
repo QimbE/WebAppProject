@@ -4,14 +4,14 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Stripe;
 using TestShop.DataAccess.Repository.IRepository;
-using TestShop.Models;
 using TestShop.Models.ViewModels;
 using TestShop.Utility;
 using Stripe.Checkout;
+using TestShop.Models.Models;
 
 namespace TestShopProject.Areas.Admin.Controllers
 {
-	[Area("admin")]
+    [Area("admin")]
     [Authorize]
     public class OrderController : Controller
 	{

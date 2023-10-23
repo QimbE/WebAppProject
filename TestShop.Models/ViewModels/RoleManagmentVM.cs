@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using TestShop.Models.Models;
 
 namespace TestShop.Models.ViewModels;
 
